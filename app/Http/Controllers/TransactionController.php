@@ -62,9 +62,7 @@ class TransactionController extends Controller
             $points = $wasteData['weight_kg'] * $category->point_per_kg;
             $totalPoints += $points;
 
-            TransactionWaste::create([
-                'transaction_id' => $transaction->id,
-                'waste_category_id' => $category->id,
+            $transaction->wastes()->attach($category->id, [
                 'weight_kg' => $wasteData['weight_kg']
             ]);
         }
@@ -74,8 +72,7 @@ class TransactionController extends Controller
         $transaction->save();
 
         $customer = User::find($transaction->customer_id);
-        $customer->point_balance += $totalPoints;
-        $customer->save();
+        $customer->increment('point_balance', $totalPoints);
 
         return redirect()->route('merchant.dashboard')->with('success', 'Transaksi selesai. Saldo poin warga telah diperbarui.');
     }

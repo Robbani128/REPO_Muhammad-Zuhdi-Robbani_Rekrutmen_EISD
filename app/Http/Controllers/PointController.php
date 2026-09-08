@@ -28,8 +28,7 @@ class PointController extends Controller
             return back()->with('error', 'Saldo poin tidak mencukupi.');
         }
 
-        $user->point_balance -= $request->amount;
-        $user->save();
+        $user->decrement('point_balance', $request->amount);
 
         return back()->with('success', "Poin sebesar {$request->amount} berhasil ditukar.");
     }
